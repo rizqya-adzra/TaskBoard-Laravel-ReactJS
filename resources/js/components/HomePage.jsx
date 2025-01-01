@@ -8,9 +8,6 @@ const HomePage = () => {
             <div className="sm:w-64 md:w-96 lg:w-5/6 xl:w-5/6 xl:flex">
                 <div className="w-full p-6 flex flex-col">
                     <UserInfo />
-                    <div className="flex">
-                        <h1 className="text-lg font-bold">Boards Anda</h1>
-                    </div>
                     <Boards />
                 </div>
             </div>

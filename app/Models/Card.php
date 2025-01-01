@@ -9,16 +9,14 @@ class Card extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'title',
+        'name',
         'description',
-        'list_id',
+        'column_id',
         'position',
     ];
 
-    public function catalogue()
+    public function column()
     {
-        return $this->belongsTo(Catalogue::class);
+        return $this->belongsTo(Column::class, 'column_id');
     }
-
-
 }

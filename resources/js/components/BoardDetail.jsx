@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import KanbanBoard from './KanbanBoard';
 
-const BoardHeader = () => {
+const BoardDetail = () => {
     const { boardId } = useParams();
     const [board, setBoard] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -24,9 +25,13 @@ const BoardHeader = () => {
     }, [boardId]);
 
     if (loading) {
-        return <p>Loading board...</p>;
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <p className="text-gray-700 text-lg font-semibold">Loading board...</p>
+            </div>
+        );
     }
-    
+
     const formattedDate = new Date(board.created_at).toLocaleDateString("id-ID", {
         day: '2-digit',
         month: 'long',
@@ -35,34 +40,49 @@ const BoardHeader = () => {
 
     return (
         <div
-            className="w-full min-h-screen bg-fixed"
+            className="h-screen bg-fixed overflow-clip"
             style={{
                 background: board.color_code,
-                backgroundAttachment: 'fixed', 
-                backgroundSize: 'cover', 
+                backgroundAttachment: 'fixed',
+                backgroundSize: 'cover',
             }}
         >
-            <div
-                className="w-full p-4 flex items-center justify-between bg-white bg-opacity-50"
-            >
-                <div className="text-gray-900 flex items-center space-x-4 gap-4">
-                    <h2 className="text-xl font-semibold">{board.name}</h2>
-                    <span className="text-sm text-gray-500">Dibuat pada: {formattedDate}</span>
-                </div>
-
-                <div className="text-gray-900 flex items-center space-x-4">
-                    <img
-                        src={board.user.photo ? `/storage/${board.user.photo}` : 'https://via.placeholder.com/150'}
-                        alt="User Profile"
-                        className="w-8 cursor-pointer hover:bg-indigo-100 rounded-full transition-all duration-300"
-                    />
+            <div className="flex flex-col">
+                <div className="w-full p-2 flex items-center justify-between bg-white px-10">
+                        <Link to="/home" className='flex items-center gap-3 cursor-pointer rounded-lg hover:bg-gray-200 p-1 px-2 transition-all ease-in-out'>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 16.811c0 .864-.933 1.406-1.683.977l-7.108-4.061a1.125 1.125 0 0 1 0-1.954l7.108-4.061A1.125 1.125 0 0 1 21 8.689v8.122ZM11.25 16.811c0 .864-.933 1.406-1.683.977l-7.108-4.061a1.125 1.125 0 0 1 0-1.954l7.108-4.061a1.125 1.125 0 0 1 1.683.977v8.122Z" />
+                            </svg>
+                            Back
+                        </Link>
+      
+                    <div className="text-gray-900 flex items-center gap-4">
+                        
+                    </div>
                 </div>
             </div>
+            <div className="flex flex-col">
+                <div className="w-full p-4 flex items-center justify-between bg-gray-100 bg-opacity-50">
+                    <div className="text-gray-900 flex items-center gap-4">
+                        <h2 className="text-xl font-semibold">{board.name}</h2>
+                        <span className="text-sm text-gray-500">Dibuat pada: {formattedDate}</span>
+                    </div>
 
-            <div className="p-6">
+                    <div className="text-gray-900 flex items-center gap-4">
+                        <button className='bg-indigo-500 rounded-lg px-3 py-2 text-white hover:bg-indigo-600 transition-all ease-in-out'>
+                            Bagikan
+                        </button>
+                        <img
+                            src={board.user.photo ? `/storage/${board.user.photo}` : 'https://via.placeholder.com/150'}
+                            alt="User Profile"
+                            className="w-8 h-8 object-cover rounded-full cursor-pointer hover:ring-2 hover:ring-indigo-300 transition"
+                        />
+                    </div>
+                </div>
+                <KanbanBoard boardId={boardId} />
             </div>
         </div>
     );
 };
 
-export default BoardHeader;
+export default BoardDetail;

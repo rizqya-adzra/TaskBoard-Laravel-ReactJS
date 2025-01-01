@@ -68,7 +68,7 @@ class BoardController extends Controller
         $board = Board::findOrFail($id);
         $board->delete();
 
-        return response()->json(['message' => 'Board deleted successfully']);
+        return response()->json(['message' => 'Board berhasil dihapus']);
     }
 }
 

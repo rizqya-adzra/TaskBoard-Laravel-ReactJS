@@ -5,6 +5,7 @@ import { showToast } from './ToastNotification';
 const Navbar = () => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false); 
     const dropdownRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
@@ -30,6 +31,17 @@ const Navbar = () => {
         };
     }, []);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 0);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
     const isActive = (path) => {
         return location.pathname === path ? 'font-bold text-indigo-600 bg-indigo-100' : '';
     };
@@ -41,10 +53,10 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="sticky top-0 border-b shadow z-50">
+        <nav className='sticky top-0 border-b shadow z-50 transition-all bg-white'>
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
                 <Link to="/home" className="flex items-center space-x-3 rtl:space-x-reverse">
-                    <span className="self-center text-2xl font-semibold whitespace-nowrap">Task-Flow</span>
+                    <span className="self-center text-2xl font-semibold">Task-Flow</span>
                 </Link>
 
                 <button
@@ -73,7 +85,7 @@ const Navbar = () => {
                     <button
                         onClick={toggleDropdown}
                         className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                        aria-expanded={isDropdownOpen ? "true" : "false"}
+                        aria-expanded={isDropdownOpen ? 'true' : 'false'}
                     >
                         <span className="sr-only">Open user menu</span>
                         <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo" />
@@ -130,26 +142,26 @@ const Navbar = () => {
                         </li>
                         <li>
                             <Link
-                                to="/about"
+                                to="/board"
                                 className={`block py-2 px-3 rounded hover:bg-indigo-100 ${isActive('/about')}`}
                             >
-                                About
+                                Board
                             </Link>
                         </li>
                         <li>
                             <Link
-                                to="/services"
+                                to="/friends"
                                 className={`block py-2 px-3 rounded hover:bg-indigo-100 ${isActive('/services')}`}
                             >
-                                Services
+                                Friends
                             </Link>
                         </li>
                         <li>
                             <Link
-                                to="/pricing"
+                                to="/about"
                                 className={`block py-2 px-3 rounded hover:bg-indigo-100 ${isActive('/pricing')}`}
                             >
-                                Pricing
+                                About
                             </Link>
                         </li>
                         <li>
