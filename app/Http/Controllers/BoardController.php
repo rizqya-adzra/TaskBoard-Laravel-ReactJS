@@ -3,15 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Board;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class BoardController extends Controller
 {
     public function index()
     {
-        $boards = Board::all();
-
-        return response()->json(['data' => $boards]);
+        $user = Auth::user()->id;
+        $boards = Board::where('owner_id', $user)->get();
+        if($boards) {
+            return response()->json(['data' => $boards]);
+        } else {
+            return response()->json(['failed' => 'gagal error']);
+        }
     }
 
     public function show($id)

@@ -36,6 +36,7 @@ const LoginForm = () => {
             if (error.response && error.response.data.errors) {
                 setErrors(error.response.data.errors);
             } else {
+                console.log(error)
                 showToast('Login gagal, coba lagi!', 'error');
             }
         }

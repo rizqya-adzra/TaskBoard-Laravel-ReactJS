@@ -9,10 +9,12 @@ import Options from './Options';
 const Boards = () => {
     const [boards, setBoards] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [options, setOptions] = useState({ showOptions: false, x: 0, y: 0, boardId: null });
+    const [options, setOptions] = useState({
+        showOptions: false,
+        boardId: null,
+    });
     const [modal, setModal] = useState({ visible: false, type: '', boardId: null, boardName: '' });
     
-
     const optionsRef = useRef(null);
     const navigate = useNavigate();
 
@@ -54,13 +56,11 @@ const Boards = () => {
         setBoards((prevBoards) => [...prevBoards, newBoard]);
     };
 
-    const handleRightClick = (event, boardId) => {
-        event.preventDefault();
-        const rect = event.target.closest('.board-item').getBoundingClientRect();
+    const handleRightClick = (e, boardId) => {
+        e.preventDefault(); 
+        optionsRef.current = e.target.closest('.board-item');
         setOptions({
             showOptions: true,
-            x: rect.left,
-            y: rect.top,
             boardId,
         });
     };
@@ -123,12 +123,12 @@ const Boards = () => {
             <div className="flex">
                 <h1 className="text-lg font-bold">Boards Anda</h1>
             </div>
+
             <Options
                 showOptions={options.showOptions}
                 onEdit={handleRenameBoard}
                 onDelete={handleDeleteBoard}
                 optionsRef={optionsRef}
-                position={{ x: options.x, y: options.y }}
             />
 
             <Modal
@@ -167,8 +167,6 @@ const Boards = () => {
                 }
             />
 
-
-
             <div className="grid gap-6 my-5 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
                 {loading ? (
                     <p>Loading...</p>
@@ -176,10 +174,10 @@ const Boards = () => {
                     boards.map((board) => (
                         <div
                             key={board.id}
-                            className="w-full max-w-xs text-center relative board-item"
+                            className="w-full max-w-xs text-center relative"
                             onContextMenu={(e) => handleRightClick(e, board.id)}
                         >
-                            <a href={`/board/show/${board.id}`} onClick={(e) => handleBoardClick(e, board.id)}>
+                            <a href={`/board/show/${board.id}`} onClick={(e) => handleBoardClick(e, board.id)} className='board-item'>
                                 <div
                                     className="object-cover object-center w-full h-36 mx-auto rounded"
                                     style={{

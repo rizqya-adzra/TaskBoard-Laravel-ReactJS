@@ -13,9 +13,15 @@ class KanbanBoardController extends Controller
     {
         $columns = Column::with('board')->where('board_id', $id)->get();
 
-        return response()->json([
-            'data' => $columns
-        ]);
+        if($columns) {
+            return response()->json([
+                'data' => $columns
+            ]);
+        } else {
+            return response()->json([
+                'failed' => 'Data gagal, coba lagi'
+            ]);
+        }
     }
 
     public function ColumnStore(Request $request)
@@ -115,7 +121,7 @@ class KanbanBoardController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'column_id' => $columnId,
-            'position' => $this->getNextPosition($columnId),
+            'position' => $this->getCardNextPosition($columnId),
         ]);
 
         if($card) {
@@ -132,4 +138,11 @@ class KanbanBoardController extends Controller
             ]);
         }
     }
+
+    private function getCardNextPosition($columnId)
+    {
+        $lastCard = Card::where('column_id', $columnId)->orderBy('position', 'desc')->first();
+        return $lastCard ? $lastCard->position + 1 : 1;
+    }
+
 }

@@ -6,13 +6,13 @@ const Options = ({ showOptions, onEdit, onDelete, optionsRef }) => {
     return (
         <div
             ref={optionsRef}
-            className="absolute bg-white shadow-lg rounded-lg z-50 border left-full top-0 ml-2"
+            className="absolute right-50 ml-2 z-50 bg-white border shadow-lg rounded-lg"
         >
-            <ul className="space-y-2 p-2">
+            <ul className="p-2 space-y-2">
                 <li>
                     <button
                         onClick={onEdit}
-                        className="w-full text-left px-4 py-2 cursor-pointer hover:bg-indigo-50 rounded transition-colors duration-200"
+                        className="w-full px-4 py-2 text-left transition-colors duration-200 rounded cursor-pointer hover:bg-indigo-50"
                     >
                         Edit
                     </button>
@@ -20,7 +20,7 @@ const Options = ({ showOptions, onEdit, onDelete, optionsRef }) => {
                 <li>
                     <button
                         onClick={onDelete}
-                        className="w-full text-left px-4 py-2 cursor-pointer text-red-500 hover:bg-indigo-50 rounded transition-colors duration-200"
+                        className="w-full px-4 py-2 text-left text-red-500 transition-colors duration-200 rounded cursor-pointer hover:bg-indigo-50"
                     >
                         Delete
                     </button>
