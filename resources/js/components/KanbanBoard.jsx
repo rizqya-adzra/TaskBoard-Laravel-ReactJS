@@ -43,21 +43,53 @@ const KanbanBoard = ({ boardId }) => {
         }
     };
 
-    const onDragEnd = (result) => {
+    const onDragEnd = async (result) => {
         const { source, destination } = result;
-        if (!destination) return;
+        if (!destination) return; 
 
         const reorderedLists = Array.from(lists);
         const [movedList] = reorderedLists.splice(source.index, 1);
-        reorderedLists.splice(destination.index, 0, movedList);
+        reorderedLists.splice(destination.index, 0, movedList); 
+        setLists(reorderedLists); 
 
-        setLists(reorderedLists);
+        const positions = reorderedLists.map((list, index) => ({
+            id: list.id,
+            position: index,
+        }));
+
+        try {
+            await axios.put('/api/kanban/column/position/put', { positions });
+            showToast('Posisi berhasil diubah', 'success');
+        } catch (error) {
+            console.error('Error updating positions:', error);
+            showToast('Gagal mengubah posisi', 'failed');
+        }
+    };
+
+    const handleDeleteList = async (listId) => {
+        try {
+            const response = await axios.delete(`/api/kanban/column/delete/${listId}`);
+            if (response.data.success) {
+                setLists((prevLists) => prevLists.filter((list) => list.id !== listId));
+                showToast(response.data.message);
+            } else {
+                showToast(response.data.message || 'Gagal menghapus List', 'failed');
+            }
+        } catch (error) {
+            console.error('Error deleting list:', error);
+            showToast('Gagal menghapus List, coba lagi', 'failed');
+        }
     };
 
     return (
         <div className="flex mt-10 h-screen overflow-x-auto">
-            <div className="flex gap-6 px-12 w-full">
-                <DragDropContext onDragEnd={onDragEnd}>
+            <div className="flex gap-6 px-1 w-full">
+                <DragDropContext
+                    onDragEnd={onDragEnd}
+                    draggableId="lists"
+                    type="list"
+                    style={{ transition: 'all 0.3s ease' }} 
+                >
                     <Droppable droppableId="lists" direction="horizontal" type="list">
                         {(provided) => (
                             <div
@@ -71,7 +103,7 @@ const KanbanBoard = ({ boardId }) => {
                                 {lists.map((list, index) => (
                                     <Draggable
                                         key={list.id}
-                                        draggableId={list.id.toString()}
+                                        draggableId={`list-${list.id}`}
                                         index={index}
                                     >
                                         {(provided) => (
@@ -79,35 +111,37 @@ const KanbanBoard = ({ boardId }) => {
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
+                                                style={{
+                                                    ...provided.draggableProps.style,
+                                                    transition: 'transform 0.3s ease', 
+                                                }}
                                             >
-                                                {editingListId === list.id ? (
-                                                    <EditListForm
-                                                        listId={list.id}
-                                                        initialTitle={list.name}
-                                                        onEditSuccess={(updatedList) => {
-                                                            setLists((prev) =>
-                                                                prev.map((list) =>
-                                                                    list.id === updatedList.id ? updatedList : list
-                                                                )
-                                                            );
-                                                            setEditingListId(null);
-                                                        }}
-                                                        onCancel={() => setEditingListId(null)}
-                                                    />
-                                                ) : (
-                                                    <List
-                                                        title={list.name}
-                                                        listId={list.id}
-                                                        onDeleteList={(id) =>
-                                                            setLists((prev) =>
-                                                                prev.filter((list) => list.id !== id)
-                                                            )
-                                                        }
-                                                        onEditTitle={() => {
-                                                            setEditingListId(list.id);
-                                                        }}
-                                                    />
-                                                )}
+                                                <List
+                                                    title={
+                                                        editingListId === list.id ? (
+                                                            <EditListForm
+                                                                listId={list.id}
+                                                                initialTitle={list.name}
+                                                                onEditSuccess={(updatedList) => {
+                                                                    setLists((prev) =>
+                                                                        prev.map((list) =>
+                                                                            list.id === updatedList.id ? updatedList : list
+                                                                        )
+                                                                    );
+                                                                    setEditingListId(null);
+                                                                }}
+                                                                onCancel={() => setEditingListId(null)}
+                                                            />
+                                                        ) : (
+                                                            list.name
+                                                        )
+                                                    }
+                                                    listId={list.id}
+                                                    onDeleteList={handleDeleteList}
+                                                    onEditTitle={() => {
+                                                        setEditingListId(list.id);
+                                                    }}
+                                                />
                                             </div>
                                         )}
                                     </Draggable>

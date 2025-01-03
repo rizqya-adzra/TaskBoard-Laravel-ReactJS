@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import ReactDOM from 'react-dom/client';
 import CreateBoardModal from './CreateBoardModal';
 
 const CreateBoard = ({ onBoardCreated }) => {

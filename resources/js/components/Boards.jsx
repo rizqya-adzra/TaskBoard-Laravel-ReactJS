@@ -162,7 +162,7 @@ const Boards = () => {
                     modal.type === 'rename' ? (
                         <p>Simpan</p>
                     ) : (
-                        <p className="text-red-500">Hapus</p>
+                        <p>Hapus</p>
                     )
                 }
             />

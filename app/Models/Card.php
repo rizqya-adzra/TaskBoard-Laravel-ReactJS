@@ -13,10 +13,17 @@ class Card extends Model
         'description',
         'column_id',
         'position',
+        'color',
+        'member_id',
     ];
 
     public function column()
     {
         return $this->belongsTo(Column::class, 'column_id');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'member_id');
     }
 }

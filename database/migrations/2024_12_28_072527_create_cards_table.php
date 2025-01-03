@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->string('color')->nullable();
             $table->bigInteger('list_id');
+            $table->json('member_id')->nullable();
             $table->integer('position');
             $table->timestamps();
         });

@@ -12,13 +12,13 @@ const Modal = ({ visible, onClose, onConfirm, title, body, confirmText }) => {
                 </div>
                 <div className="flex justify-end space-x-4">
                     <button
-                        className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200"
+                        className="px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300 transition-all"
                         onClick={onClose}
                     >
                         Batal
                     </button>
                     <button
-                        className="px-4 py-2 rounded hover:bg-gray-100"
+                        className="bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 transition"
                         onClick={onConfirm}
                     >
                         {confirmText}

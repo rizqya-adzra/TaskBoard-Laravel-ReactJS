@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import KanbanBoard from './KanbanBoard';
+import ModalDialog from './ModalDialog';
 
 const BoardDetail = () => {
     const { boardId } = useParams();
     const [board, setBoard] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(null)
+
+    const handleOpenModal = () => setIsModalOpen(true)
+    const handleCloseModal = () => setIsModalOpen(false)
 
     useEffect(() => {
         const fetchBoardData = async () => {
@@ -33,6 +38,16 @@ const BoardDetail = () => {
     }
 
     const formattedDate = new Date(board.created_at).toLocaleDateString("id-ID", {
+        hour: 'numeric',
+        minute: 'numeric',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+    });
+
+    const formattedUpdate = new Date(board.updated_at).toLocaleDateString("id-ID", {
+        hour: 'numeric',
+        minute: 'numeric',
         day: '2-digit',
         month: 'long',
         year: 'numeric',
@@ -64,22 +79,32 @@ const BoardDetail = () => {
             <div className="flex flex-col">
                 <div className="w-full p-4 flex items-center justify-between bg-gray-100 bg-opacity-50">
                     <div className="text-gray-900 flex items-center gap-4">
-                        <h2 className="text-xl font-semibold">{board.name}</h2>
-                        <span className="text-sm text-gray-500">Dibuat pada: {formattedDate}</span>
+                        <h2 className="text-xl font-semibold cursor-pointer" onClick={handleOpenModal}>{board.name}</h2>
+                        <div className='flex flex-col'>
+                            <span className="text-sm text-gray-500">Dibuat pada: {formattedDate}</span>
+                            <span className="text-sm text-gray-500">Terakhir di edit: {formattedUpdate}</span>
+                        </div>
                     </div>
 
                     <div className="text-gray-900 flex items-center gap-4">
-                        <button className='bg-indigo-500 rounded-lg px-3 py-2 text-white hover:bg-indigo-600 transition-all ease-in-out'>
-                            Bagikan
-                        </button>
                         <img
                             src={board.user.photo ? `/storage/${board.user.photo}` : 'https://via.placeholder.com/150'}
                             alt="User Profile"
                             className="w-8 h-8 object-cover rounded-full cursor-pointer hover:ring-2 hover:ring-indigo-300 transition"
                         />
+                        <button className='bg-indigo-500 rounded-lg px-3 py-2 text-white hover:bg-indigo-600 transition-all ease-in-out'>
+                            Bagikan
+                        </button>
                     </div>
                 </div>
                 <KanbanBoard boardId={boardId} />
+                <ModalDialog
+                    title={board.name}
+                    description={board.description}
+                    buttonText="Close"
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                />
             </div>
         </div>
     );

@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 
 class KanbanBoardController extends Controller
 {
-    public function ColumnIndex($id)
+    public function columnIndex($id)
     {
-        $columns = Column::with('board')->where('board_id', $id)->get();
+        $columns = Column::where('board_id', $id)->orderBy('position')->get();
 
         if($columns) {
             return response()->json([
@@ -24,7 +24,7 @@ class KanbanBoardController extends Controller
         }
     }
 
-    public function ColumnStore(Request $request)
+    public function columnStore(Request $request)
     {
         $request->validate([
             'name' => 'required',
@@ -65,7 +65,7 @@ class KanbanBoardController extends Controller
         return $lastColumn ? $lastColumn->position + 1 : 1;
     }
 
-    public function ColumnUpdate(Request $request, $id)
+    public function columnUpdate(Request $request, $id)
     {
         $column = Column::findOrFail($id);
         $column->name = $request->input('name');
@@ -74,7 +74,7 @@ class KanbanBoardController extends Controller
         return response()->json(['data' => $column]);
     }
 
-    public function ColumnDestroy($id)
+    public function columnDestroy($id)
     {
         $column = Column::findOrFail($id);
         $column->delete();
@@ -85,16 +85,43 @@ class KanbanBoardController extends Controller
         ]);
     }
 
-    public function CardIndex($id)
+    public function columnUpdatePositions(Request $request)
     {
-        $cards = Card::with('column')->where('column_id', $id)->get();
+        $validated = $request->validate([
+            'positions' => 'required|array',
+            'positions.*.id' => 'required|exists:columns,id',
+            'positions.*.position' => 'required|integer',
+        ]);
+
+        foreach ($validated['positions'] as $positionData) {
+            $column = Column::findOrFail($positionData['id']);
+            $column->position = $positionData['position'];
+            $column->save();  
+        }
 
         return response()->json([
-            'data' => $cards
+            'success' => true,
+            'message' => 'Positions updated successfully.',
         ]);
     }
 
-    public function CardStore(Request $request)
+
+    public function cardIndex($id)
+    {
+        $cards = Card::where('column_id', $id)->orderBy('position')->get();
+
+        if ($cards) {
+            return response()->json([
+                'data' => $cards
+            ]);
+        } else {
+            return response()->json([
+                'failed' => 'Data gagal, coba lagi'
+            ]);
+        }
+    }
+
+    public function cardStore(Request $request)
     {
         $request->validate([
             'name' => 'required',
@@ -145,4 +172,59 @@ class KanbanBoardController extends Controller
         return $lastCard ? $lastCard->position + 1 : 1;
     }
 
+    // public function cardShow($id)
+    // {
+    //     $card = Card::findOrFail($id);
+    //     return response()->json([
+    //         'data' => $card
+    //     ], 200);
+    // }
+
+    public function cardUpdatePositions(Request $request)
+    {
+        $data = $request->validate([
+            'positions' => 'required',
+            'positions.*.id' => 'required|exists:columns,id',
+            'positions.*.position' => 'required',
+        ]);
+
+        foreach ($data['positions'] as $positionData) {
+            Card::where('id', $positionData['id'])
+            ->update(['position' => $positionData['position']]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Positions updated successfully.',
+        ]);
+    }
+
+    public function cardUpdate(Request $request, $id)
+    {
+       $request->validate([
+            'name' => 'required',
+            'description' => 'required',
+            'position' => 'required',
+            'color' => 'nullable',
+            'member_id' => 'nullable',
+       ]);
+
+       $card = Card::findOrFail($id);
+       $process = $card->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'position' => $request->position,
+            'color' => $request->color,
+            'member_id' => $request->member_id,
+       ]);
+
+       if($process) {
+            return response()->json(['data' => $process]);
+       } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupload data'
+            ]);
+       }
+    }
 }

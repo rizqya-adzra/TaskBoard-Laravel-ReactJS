@@ -19,13 +19,17 @@ Route::prefix('api')->group(function () {
     Route::get('/board/show/{id}', [BoardController::class, 'show']);
     Route::delete('/board/delete/{id}', [BoardController::class, 'destroy']);
 
-    Route::get('/kanban/column/index/{id}', [KanbanBoardController::class, 'ColumnIndex']);
-    Route::post('/kanban/column/post', [KanbanBoardController::class, 'ColumnStore']);
-    Route::put('/kanban/column/put/{id}', [KanbanBoardController::class, 'ColumnUpdate']);
-    Route::delete('/kanban/column/delete/{id}', [KanbanBoardController::class, 'ColumnDestroy']);
-
-    Route::get('/kanban/card/index/{id}', [KanbanBoardController::class, 'CardIndex']);
-    Route::post('/kanban/card/post', [KanbanBoardController::class, 'CardStore']);
+    Route::get('/kanban/column/index/{id}', [KanbanBoardController::class, 'columnIndex']);
+    Route::post('/kanban/column/post', [KanbanBoardController::class, 'columnStore']);
+    Route::put('/kanban/column/put/{id}', [KanbanBoardController::class, 'columnUpdate']);
+    Route::delete('/kanban/column/delete/{id}', [KanbanBoardController::class, 'columnDestroy']);
+    Route::put('/kanban/column/position/put', [KanbanBoardController::class, 'columnUpdatePositions']);
+    
+    Route::get('/kanban/card/index/{id}', [KanbanBoardController::class, 'cardIndex']);
+    Route::post('/kanban/card/post', [KanbanBoardController::class, 'cardStore']);
+    // Route::get('/kanban/card/show/{id}', [KanbanBoardController::class, 'cardShow']);
+    Route::put('/kanban/card/put', [KanbanBoardController::class, 'cardUpdate']);
+    Route::put('/kanban/card/position/put', [KanbanBoardController::class, 'cardUpdatePositions']);
 });
 
 Route::get('/{any}', function () {

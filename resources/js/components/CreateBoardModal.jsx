@@ -150,13 +150,13 @@ const CreateBoardModal = ({ isOpen, onClose, onBoardCreated }) => {
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-4 py-2 text-sm bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+                    className="px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300 transition-all"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-all"
+                    className="px-4 py-2 text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded transition-all"
                   >
                     Simpan
                   </button>

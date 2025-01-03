@@ -56,4 +56,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(CardMember::class);
     }
+
+    public function cards()
+    {
+        return $this->hasMany(Card::class, 'id');
+    }
 }

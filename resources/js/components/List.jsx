@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
+import { Draggable, Droppable } from 'react-beautiful-dnd';
 import axios from 'axios';
 import Options from './Options';
 import Modal from './Modal';
 import Card from './Card';
 import AddCard from './AddCard';
+import AddNewButton from './AddNewButton';
 
 const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
     const [cards, setCards] = useState([]);
@@ -22,15 +23,17 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
         const fetchCards = async () => {
             try {
                 const response = await axios.get(`/api/kanban/card/index/${listId}`);
-                setCards(response.data.data);
+                if (response.data && response.data.data) {
+                    setCards(response.data.data);
+                } else {
+                    console.error("Response data structure is not correct.");
+                }
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching cards:", error);
             }
         };
 
-        if (listId) {
-            fetchCards();
-        }
+        if (listId) fetchCards();
     }, [listId]);
 
     useEffect(() => {
@@ -87,6 +90,10 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
         handleModalClose();
     };
 
+    const closeOption = () => {
+        setShowOptions(false);
+    };
+
     return (
         <Draggable draggableId={`list-${listId}`} index={index}>
             {(provided, snapshot) => (
@@ -94,7 +101,7 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className={`p-4 rounded-lg w-80 bg-white shadow-lg flex flex-col h-fit max-h-[500px] ${snapshot.isDragging ? 'opacity-50' : ''}`}
+                    className={`p-4 rounded-lg w-80 bg-white shadow-lg flex flex-col ${snapshot.isDragging ? 'opacity-50' : ''}`}
                 >
                     <div
                         className="title mb-4 cursor-pointer font-semibold text-lg"
@@ -124,13 +131,22 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
                         onEdit={handleTitleDoubleClick}
                         onDelete={handleDelete}
                         optionsRef={optionsRef}
+                        onClose={closeOption}
                     />
-                    <div className="cards-container flex-1 overflow-y-auto max-h-[400px] flex flex-col gap-4">
-                        {cards.map((card, index) => (
-                            <Card key={card.id} card={card} index={index} />
-                        ))}
-                        <div ref={scrollRef} />
-                    </div>
+                    <Droppable droppableId={`cards-${listId}`} type="card">
+                        {(provided) => (
+                            <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className="cards-container flex-1 overflow-y-auto max-h-[45vh] flex flex-col gap-4"
+                            >
+                                {cards.map((card, index) => (
+                                    <Card key={card.id} card={card} index={index} />
+                                ))}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
                     {isAddingCard ? (
                         <AddCard
                             newCard={newCard}
@@ -141,12 +157,12 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
                             onCancel={() => setIsAddingCard(false)}
                         />
                     ) : (
-                        <button
-                            onClick={() => setIsAddingCard(true)}
-                            className="py-2 px-4 bg-transparent font-semibold rounded-lg hover:bg-gray-100 transition"
-                        >
-                            + Add New Card
-                        </button>
+                        <div className="mt-4">
+                            <AddNewButton
+                                onClick={() => setIsAddingCard(true)}
+                                AddName="Tambah Card baru +"
+                            />
+                        </div>
                     )}
                     <Modal
                         visible={isModalVisible}
@@ -154,7 +170,7 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
                         onConfirm={handleModalConfirm}
                         title={<p className="text-red-500">Yakin untuk menghapus?</p>}
                         body="Apakah Anda yakin untuk menghapus? List yang telah terhapus tidak dapat dikembalikan."
-                        confirmText={<p className="text-red-500">Hapus</p>}
+                        confirmText={<p>Hapus</p>}
                     />
                 </div>
             )}
