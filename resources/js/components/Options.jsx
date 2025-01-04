@@ -16,9 +16,9 @@ const Options = ({ showOptions, onEdit, onDelete, optionsRef, onClose }) => {
     return (
         <div
             ref={optionsRef}
-            className="absolute right-50 ml-2 z-50 bg-white border shadow-lg rounded-lg"
+            className="absolute z-50 bg-white border shadow-lg rounded-lg"
         >
-            <ul className="p-2 space-y-2">
+            <ul className="p-2">
                 <li>
                     <button
                         onClick={handleEdit}

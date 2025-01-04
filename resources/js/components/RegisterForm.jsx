@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { showToast } from './ToastNotification';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react'
+import { showToast } from './ToastNotification'
+import axios from 'axios'
+import { Link, useNavigate } from 'react-router-dom'
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({
@@ -9,45 +9,45 @@ const RegisterForm = () => {
         email: '',
         password: '',
         password_confirmation: '',
-    });
+    })
 
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState({})
+    const [loading, setLoading] = useState(false)
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
         setFormData((prevState) => ({
             ...prevState,
             [name]: value,
-        }));
-    };
+        }))
+    }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setErrors({}); 
+        e.preventDefault()
+        setLoading(true)
+        setErrors({}) 
 
         try {
-            const response = await axios.post('/api/register/post', formData);
-            setLoading(false);
+            const response = await axios.post('/api/register/post', formData)
+            setLoading(false)
 
             if (response.data.success) {
-                showToast('Registrasi berhasil!', 'success');
-                navigate('/home');
+                showToast('Registrasi berhasil!', 'success')
+                navigate('/home')
             } else if (response.data.errors?.email) {
-                showToast('Email sudah terpakai', 'error');
+                showToast('Email sudah terpakai', 'error')
             }
         } catch (error) {
-            setLoading(false);
+            setLoading(false)
             if (error.response && error.response.data.errors) {
-                setErrors(error.response.data.errors);
+                setErrors(error.response.data.errors)
             } else {
-                showToast('Terjadi kesalahan, coba lagi.', 'error');
+                showToast('Terjadi kesalahan, coba lagi.', 'error')
             }
         }
-    };
+    }
 
     return (
         <form onSubmit={handleSubmit} className="w-full my-12">
@@ -112,7 +112,7 @@ const RegisterForm = () => {
                 {loading ? 'Loading...' : 'Daftar'}
             </button>
         </form>
-    );
-};
+    )
+}
 
-export default RegisterForm;
+export default RegisterForm

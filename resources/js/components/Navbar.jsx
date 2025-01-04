@@ -1,56 +1,56 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { showToast } from './ToastNotification';
+import React, { useState, useEffect, useRef } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { showToast } from './ToastNotification'
 
 const Navbar = () => {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false); 
-    const dropdownRef = useRef(null);
-    const location = useLocation();
-    const navigate = useNavigate();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [isScrolled, setIsScrolled] = useState(false) 
+    const dropdownRef = useRef(null)
+    const location = useLocation()
+    const navigate = useNavigate()
 
     const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
-    };
+        setIsDropdownOpen(!isDropdownOpen)
+    }
 
     const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
-    };
+        setIsMobileMenuOpen(!isMobileMenuOpen)
+    }
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
+                setIsDropdownOpen(false)
             }
-        };
+        }
 
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside)
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     useEffect(() => {
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 0);
-        };
+            setIsScrolled(window.scrollY > 0)
+        }
 
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll)
         return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+            window.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
 
     const isActive = (path) => {
-        return location.pathname === path ? 'font-bold text-indigo-600 bg-indigo-100' : '';
-    };
+        return location.pathname === path ? 'font-bold text-indigo-600 bg-indigo-100' : ''
+    }
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        showToast('Logout berhasil!');
-        navigate('/');
-    };
+        localStorage.removeItem('token')
+        showToast('Logout berhasil!')
+        navigate('/')
+    }
 
     return (
         <nav className='sticky top-0 border-b shadow z-50 transition-all bg-white'>
@@ -225,7 +225,7 @@ const Navbar = () => {
                 </div>
             </div>
         </nav>
-    );
-};
+    )
+}
 
-export default Navbar;
+export default Navbar

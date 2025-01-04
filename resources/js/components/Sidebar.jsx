@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Sidebar = () => {
     return (
@@ -42,7 +42,7 @@ const Sidebar = () => {
                 <a href="#" className="block text-sm rounded-lg gap-2 px-2 py-1 hover:bg-indigo-100 transition-all duration-300 ease-in-out">Logout</a>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default Sidebar;
+export default Sidebar

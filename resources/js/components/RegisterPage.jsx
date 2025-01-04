@@ -1,6 +1,6 @@
-import React from 'react';
-import RegisterForm from './RegisterForm';
-import { showToast } from './ToastNotification';  
+import React from 'react'
+import RegisterForm from './RegisterForm'
+import { showToast } from './ToastNotification'  
 
 const RegisterPage = () => {
     return (
@@ -14,7 +14,7 @@ const RegisterPage = () => {
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
-export default RegisterPage;
+export default RegisterPage

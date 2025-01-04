@@ -58,7 +58,6 @@ const Boards = () => {
 
     const handleRightClick = (e, boardId) => {
         e.preventDefault(); 
-        optionsRef.current = e.target.closest('.board-item');
         setOptions({
             showOptions: true,
             boardId,

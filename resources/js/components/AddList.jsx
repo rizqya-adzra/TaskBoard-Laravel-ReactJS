@@ -1,42 +1,43 @@
-import React, { useState, useRef, useEffect } from 'react';
-import SaveButton from './SaveButton';
-import CancelButton from './CancelButton';
-import InputField from './InputField';
-import AddNewButton from './AddNewButton';
+import React, { useState, useRef, useEffect } from 'react'
+import SaveButton from './SaveButton'
+import CancelButton from './CancelButton'
+import InputField from './InputField'
+import AddNewButton from './AddNewButton'
+import { showToast } from './ToastNotification'
 
 const AddList = ({ onAddList }) => {
-    const [newListTitle, setNewListTitle] = useState('');
-    const [isAdding, setIsAdding] = useState(false);
-    const inputRef = useRef(null);
+    const [newListTitle, setNewListTitle] = useState('')
+    const [isAdding, setIsAdding] = useState(false)
+    const inputRef = useRef(null)
 
     const handleAddClick = () => {
         if (!newListTitle.trim()) {
-            alert('Nama List tidak boleh kosong');
-            return;
+            showToast('Nama List tidak boleh kosong', 'failed')
+            return
         }
-        onAddList(newListTitle);
-        setNewListTitle('');
-        setIsAdding(false);
-    };
+        onAddList(newListTitle)
+        setNewListTitle('')
+        setIsAdding(false)
+    }
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            handleAddClick();
+            handleAddClick()
         }
-    };
+    }
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (inputRef.current && !inputRef.current.contains(event.target)) {
-                setIsAdding(false);
+                setIsAdding(false)
             }
-        };
+        }
 
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside)
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [])
 
     return (
         <div className="rounded-lg w-80 flex flex-col flex-wrap ">
@@ -52,7 +53,10 @@ const AddList = ({ onAddList }) => {
                         onKeyPress={handleKeyPress}
                     />
                     <div className="flex gap-3 mt-3">
-                        <SaveButton onClick={handleAddClick} />
+                        <SaveButton 
+                            onClick={handleAddClick}
+                            buttonName='Tambahkan'
+                        />
                         <CancelButton onClick={() => setIsAdding(false)} />
                     </div>
                 </div>
@@ -63,7 +67,7 @@ const AddList = ({ onAddList }) => {
                 />
             )}
         </div>
-    );
-};
+    )
+}
 
-export default AddList;
+export default AddList

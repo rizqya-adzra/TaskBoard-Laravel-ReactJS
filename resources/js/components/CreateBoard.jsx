@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
-import CreateBoardModal from './CreateBoardModal';
+import CreateBoardModal from './CreateBoardModal'
 
 const CreateBoard = ({ onBoardCreated }) => {
-    const [isModalOpen, setModalOpen] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false)
 
     const handleOpenModal = () => {
-        setModalOpen(true);
-    };
+        setModalOpen(true)
+    }
 
     const handleCloseModal = () => {
-        setModalOpen(false);
-    };
+        setModalOpen(false)
+    }
     return (
         <div>
             <a
