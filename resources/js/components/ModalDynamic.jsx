@@ -23,14 +23,14 @@ const ModalDynamic = ({
     positionOptions,
     initialPosition,
     handlePositionChange,
-    cardColor // This comes from the database
+    cardColor
 }) => {
     if (!visible) return null;
 
     const [name, setName] = useState(placeholderName || '');
     const [description, setDescription] = useState(placeholderDesc || '');
     const [isEditingDescription, setIsEditingDescription] = useState(false);
-    const [color, setColor] = useState(cardColor || ''); // Initialize with cardColor
+    const [color, setColor] = useState(cardColor || '');
     const [memberId, setMemberId] = useState('');
     const [selectedPosition, setSelectedPosition] = useState(initialPosition);
     const [isColorOptionVisible, setIsColorOptionVisible] = useState(false);
