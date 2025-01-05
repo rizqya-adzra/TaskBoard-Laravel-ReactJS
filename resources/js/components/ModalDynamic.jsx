@@ -106,8 +106,8 @@ const ModalDynamic = ({
     };
 
     const handleColorSelect = (selectedColor) => {
-        setColor(selectedColor); // Update the selected color
-        setIsColorOptionVisible(false); // Close the color picker
+        setColor(selectedColor); 
+        setIsColorOptionVisible(false); 
     };
 
     return (
