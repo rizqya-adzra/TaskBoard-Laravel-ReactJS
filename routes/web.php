@@ -27,9 +27,9 @@ Route::prefix('api')->group(function () {
     
     Route::get('/kanban/card/index/{id}', [KanbanBoardController::class, 'cardIndex']);
     Route::post('/kanban/card/post', [KanbanBoardController::class, 'cardStore']);
-    // Route::get('/kanban/card/show/{id}', [KanbanBoardController::class, 'cardShow']);
-    Route::put('/kanban/card/put', [KanbanBoardController::class, 'cardUpdate']);
+    Route::put('/kanban/card/put/{id}', [KanbanBoardController::class, 'cardUpdate']);
     Route::put('/kanban/card/position/put', [KanbanBoardController::class, 'cardUpdatePositions']);
+    Route::delete('/kanban/card/delete/{id}', [KanbanBoardController::class, 'cardDestroy']);
 });
 
 Route::get('/{any}', function () {

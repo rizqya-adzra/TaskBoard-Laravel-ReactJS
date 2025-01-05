@@ -105,6 +105,7 @@ class KanbanBoardController extends Controller
         ]);
     }
 
+    //==========================================================================================
 
     public function cardIndex($id)
     {
@@ -172,14 +173,6 @@ class KanbanBoardController extends Controller
         return $lastCard ? $lastCard->position + 1 : 1;
     }
 
-    // public function cardShow($id)
-    // {
-    //     $card = Card::findOrFail($id);
-    //     return response()->json([
-    //         'data' => $card
-    //     ], 200);
-    // }
-
     public function cardUpdatePositions(Request $request)
     {
         $data = $request->validate([
@@ -201,30 +194,56 @@ class KanbanBoardController extends Controller
 
     public function cardUpdate(Request $request, $id)
     {
-       $request->validate([
+        $request->validate([
             'name' => 'required',
-            'description' => 'required',
-            'position' => 'required',
+            'description' => 'nullable',
+            'position' => 'required|integer',
             'color' => 'nullable',
             'member_id' => 'nullable',
-       ]);
+        ]);
 
-       $card = Card::findOrFail($id);
-       $process = $card->update([
+        $card = Card::findOrFail($id);
+        $oldPosition = $card->position;
+        $newPosition = $request->position;
+
+        if ($oldPosition !== $newPosition) {
+            if ($newPosition > $oldPosition) {
+                Card::where('position', '>', $oldPosition)
+                    ->where('position', '<=', $newPosition)
+                    ->decrement('position');
+            } else {
+                Card::where('position', '<', $oldPosition)
+                    ->where('position', '>=', $newPosition)
+                    ->increment('position');
+            }
+        }
+
+        $process = $card->update([
             'name' => $request->name,
             'description' => $request->description,
-            'position' => $request->position,
+            'position' => $newPosition,
             'color' => $request->color,
             'member_id' => $request->member_id,
-       ]);
+        ]);
 
-       if($process) {
+        if ($process) {
             return response()->json(['data' => $process]);
-       } else {
+        } else {
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mengupload data'
             ]);
-       }
+        }
+    }
+
+    public function cardDestroy($id)
+    {
+        $card = Card::findOrFail($id);
+        $card->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Card berhasil dihapus'
+        ]);
     }
 }

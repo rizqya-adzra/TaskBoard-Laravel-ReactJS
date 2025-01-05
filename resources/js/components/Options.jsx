@@ -16,7 +16,7 @@ const Options = ({ showOptions, onEdit, onDelete, optionsRef, onClose }) => {
     return (
         <div
             ref={optionsRef}
-            className="absolute z-50 bg-white border shadow-lg rounded-lg"
+            className="absolute z-50 transform translate-x-52 -translate-y-4 mt-2 w-max bg-white border shadow-lg rounded-lg"
         >
             <ul className="p-2">
                 <li>

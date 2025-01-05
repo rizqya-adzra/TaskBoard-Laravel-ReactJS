@@ -58,7 +58,7 @@ const EditListForm = ({ listId, initialTitle, onEditSuccess, onCancel }) => {
                 placeholder="Edit list name"
             />
             <div className="flex gap-3 mt-3">
-                <SaveButton onClick={handleEditSubmit} />
+                <SaveButton onClick={handleEditSubmit} buttonName='Simpan' />
                 <CancelButton onClick={onCancel} />
             </div>
         </form>

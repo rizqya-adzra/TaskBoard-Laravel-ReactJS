@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import KanbanBoard from './KanbanBoard';
 import ModalDialog from './ModalDialog';
+import Tooltip from './Tooltip';
 
 const BoardDetail = () => {
     const { boardId } = useParams();
@@ -18,7 +19,6 @@ const BoardDetail = () => {
             try {
                 const response = await axios.get(`/api/board/show/${boardId}`);
                 setBoard(response.data.data);
-                console.log(response.data);
             } catch (error) {
                 console.error('Error fetching board data:', error);
             } finally {
@@ -87,11 +87,13 @@ const BoardDetail = () => {
                     </div>
 
                     <div className="text-gray-900 flex items-center gap-4">
-                        <img
-                            src={board.user.photo ? `/storage/${board.user.photo}` : 'https://via.placeholder.com/150'}
-                            alt="User Profile"
-                            className="w-8 h-8 object-cover rounded-full cursor-pointer hover:ring-2 hover:ring-indigo-300 transition"
-                        />
+                        <Tooltip text={board.user.name}>
+                            <img
+                                src={board.user.photo ? `/storage/${board.user.photo}` : 'https://via.placeholder.com/150'}
+                                alt="User Profile"
+                                className="size-8 object-cover rounded-full cursor-pointer hover:ring-2 hover:ring-indigo-300 transition"
+                                />
+                        </Tooltip>
                         <button className='bg-indigo-500 rounded-lg px-3 py-2 text-white hover:bg-indigo-600 transition-all ease-in-out'>
                             Bagikan
                         </button>

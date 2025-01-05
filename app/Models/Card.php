@@ -17,6 +17,8 @@ class Card extends Model
         'member_id',
     ];
 
+    public $timestamps = true;
+
     public function column()
     {
         return $this->belongsTo(Column::class, 'column_id');

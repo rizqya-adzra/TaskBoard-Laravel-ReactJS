@@ -15,6 +15,8 @@ class Column extends Model
         'position'
     ];
 
+    public $timestamps = true;
+
     public function board()
     {
         return $this->belongsTo(Board::class, 'board_id');

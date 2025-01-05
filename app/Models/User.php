@@ -47,6 +47,8 @@ class User extends Authenticatable
         ];
     }
 
+    public $timestamps = true;
+
     public function boards()
     {
         return $this->hasMany(Board::class, 'id');

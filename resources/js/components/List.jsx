@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Draggable, Droppable } from 'react-beautiful-dnd'
 import axios from 'axios'
 import Options from './Options'
 import Modal from './Modal'
 import Card from './Card'
 import AddCard from './AddCard'
 import AddNewButton from './AddNewButton'
-import ModalDynamic from './ModalDynamic'
 import { showToast } from './ToastNotification'
 
-const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
+const List = ({ title, listId, onEditTitle, onDeleteList }) => {
     const [cards, setCards] = useState([])
     const [isAddingCard, setIsAddingCard] = useState(false)
     const [newCard, setNewCard] = useState('')
@@ -20,6 +18,48 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
 
     const scrollRef = useRef(null)
     const optionsRef = useRef(null)
+
+    const refreshCards = async () => {
+        try {
+            const response = await axios.get(`/api/kanban/card/index/${listId}`)
+            if (response.data && response.data.data) {
+                setCards(response.data.data) 
+            }
+        } catch (error) {
+            console.error('Error refreshing cards:', error)
+        }
+    }
+
+    const handlePositionChange = (cardId, newPosition) => {
+        const updatedCards = [...cards]
+        const cardToMove = updatedCards.find(card => card.id === cardId)
+
+        if (cardToMove) {
+            const currentPosition = cardToMove.position
+
+            updatedCards.splice(updatedCards.indexOf(cardToMove), 1)
+
+            updatedCards.forEach((card) => {
+                if (card.position >= newPosition && card.position < currentPosition) {
+                    card.position += 1
+                } else if (card.position <= newPosition && card.position > currentPosition) {
+                    card.position -= 1
+                }
+            })
+
+            cardToMove.position = newPosition
+
+            updatedCards.push(cardToMove)
+            updatedCards.sort((a, b) => a.position - b.position)
+
+            setCards(updatedCards)
+        }
+    }
+
+    const positionOptions = cards.map((_, index) => ({
+        value: index + 1,
+        label: `Posisi ${index + 1}`,
+    }))
 
     useEffect(() => {
         const fetchCards = async () => {
@@ -54,7 +94,7 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
     const handleTitleDoubleClick = () => onEditTitle(listId, title)
 
     const handleAddCard = async () => {
-        if (!newCard.trim()){
+        if (!newCard.trim()) {
             showToast('Nama card tidak boleh kosong', 'failed')
             return
         }
@@ -100,87 +140,74 @@ const List = ({ title, listId, onEditTitle, onDeleteList, index }) => {
     }
 
     return (
-        <Draggable draggableId={`list-${listId}`} index={index}>
-            {(provided, snapshot) => (
-                <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className={`p-4 rounded-lg w-80 bg-white shadow-lg flex flex-col ${snapshot.isDragging ? 'opacity-50' : ''}`}
-                >
-                    <div
-                        className="title mb-4 cursor-pointer font-semibold text-lg"
-                        onDoubleClick={handleTitleDoubleClick}
+        <div className="p-4 rounded-lg w-80 bg-white shadow-lg flex flex-col">
+            <div
+                className="title mb-4 cursor-pointer font-semibold text-lg"
+                onDoubleClick={handleTitleDoubleClick}
+            >
+                <div className="flex justify-between items-center">
+                    <h3>{title}</h3>
+                    <svg
+                        onClick={() => setShowOptions((prevState) => !prevState)}
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="h-6 w-6 cursor-pointer hover:text-gray-500"
                     >
-                        <div className="flex justify-between items-center">
-                            <h3>{title}</h3>
-                            <svg
-                                onClick={() => setShowOptions((prevState) => !prevState)}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth="1.5"
-                                stroke="currentColor"
-                                className="h-6 w-6 cursor-pointer hover:text-gray-500"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                                />
-                            </svg>
-                        </div>
-                    </div>
-                    <Options
-                        showOptions={showOptions}
-                        onEdit={handleTitleDoubleClick}
-                        onDelete={handleDelete}
-                        optionsRef={optionsRef}
-                        onClose={closeOption}
-                    />
-                    <Droppable droppableId={`cards-${listId}`} type="card">
-                        {(provided) => (
-                            <div
-                                ref={provided.innerRef}
-                                {...provided.droppableProps}
-                                className="cards-container flex-1 overflow-y-auto max-h-[45vh] flex flex-col gap-4"
-                            > 
-                                {cards.map((card, index) => (
-                                    <Card key={card.id} card={card} index={index} />
-                                ))}
-                                {provided.placeholder}
-                            </div>
-                        )}
-                    </Droppable>
-                    {isAddingCard ? (
-                        <AddCard
-                            newCard={newCard}
-                            setNewCard={setNewCard}
-                            description={description}
-                            setDescription={setDescription}
-                            onAddCard={handleAddCard}
-                            onCancel={() => setIsAddingCard(false)}
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                         />
-                    ) : (
-                        <div className="mt-4">
-                            <AddNewButton
-                                onClick={() => setIsAddingCard(true)}
-                                AddName="Tambah Card baru +"
-                            />
-                        </div>
-                    )}
-                    <Modal
-                        visible={isModalVisible}
-                        onClose={handleModalClose}
-                        onConfirm={handleModalConfirm}
-                        title={<p className="text-red-500">Yakin untuk menghapus?</p>}
-                        body="Apakah Anda yakin untuk menghapus? List yang telah terhapus tidak dapat dikembalikan."
-                        confirmText={<p>Hapus</p>}
+                    </svg>
+                </div>
+            </div>
+            <Options
+                showOptions={showOptions}
+                onEdit={handleTitleDoubleClick}
+                onDelete={handleDelete}
+                optionsRef={optionsRef}
+                onClose={closeOption}
+            />
+            <div className="cards-container flex-1 overflow-y-auto max-h-[45vh] flex flex-col gap-4">
+                {cards.map((card, index) => (
+                    <Card
+                        key={card.id}
+                        card={{ ...card, position: index + 1 }}
+                        refreshCards={refreshCards}
+                        positionOptions={positionOptions}
+                        handlePositionChange={handlePositionChange}
                     />
-
+                ))}
+            </div>
+            {isAddingCard ? (
+                <AddCard
+                    newCard={newCard}
+                    setNewCard={setNewCard}
+                    description={description}
+                    setDescription={setDescription}
+                    onAddCard={handleAddCard}
+                    onCancel={() => setIsAddingCard(false)}
+                />
+            ) : (
+                <div className="mt-4">
+                    <AddNewButton
+                        onClick={() => setIsAddingCard(true)}
+                        AddName="Tambah Card baru +"
+                    />
                 </div>
             )}
-        </Draggable>
+            <Modal
+                visible={isModalVisible}
+                onClose={handleModalClose}
+                onConfirm={handleModalConfirm}
+                title={<p className="text-red-500">Yakin untuk menghapus?</p>}
+                body="Apakah Anda yakin untuk menghapus? List yang telah terhapus tidak dapat dikembalikan."
+                confirmText={<p>Hapus</p>}
+            />
+        </div>
     )
 }
 

@@ -16,6 +16,8 @@ class Board extends Model
         'color_code'
     ];
 
+    public $timestamps = true;
+
     public function user()
     {
         return $this->belongsTo(User::class, 'owner_id');

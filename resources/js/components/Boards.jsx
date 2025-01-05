@@ -14,7 +14,7 @@ const Boards = () => {
         boardId: null,
     });
     const [modal, setModal] = useState({ visible: false, type: '', boardId: null, boardName: '' });
-    
+
     const optionsRef = useRef(null);
     const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ const Boards = () => {
     };
 
     const handleRightClick = (e, boardId) => {
-        e.preventDefault(); 
+        e.preventDefault();
         setOptions({
             showOptions: true,
             boardId,
@@ -174,7 +174,7 @@ const Boards = () => {
                         <div
                             key={board.id}
                             className="w-full max-w-xs text-center relative"
-                            onContextMenu={(e) => handleRightClick(e, board.id)}
+                            onContextMenu={(e) => handleRightClick(e, board.id)} 
                         >
                             <a href={`/board/show/${board.id}`} onClick={(e) => handleBoardClick(e, board.id)} className='board-item'>
                                 <div

@@ -45,12 +45,12 @@ const KanbanBoard = ({ boardId }) => {
 
     const onDragEnd = async (result) => {
         const { source, destination } = result;
-        if (!destination) return; 
+        if (!destination) return;
 
         const reorderedLists = Array.from(lists);
         const [movedList] = reorderedLists.splice(source.index, 1);
-        reorderedLists.splice(destination.index, 0, movedList); 
-        setLists(reorderedLists); 
+        reorderedLists.splice(destination.index, 0, movedList);
+        setLists(reorderedLists);
 
         const positions = reorderedLists.map((list, index) => ({
             id: list.id,
@@ -88,7 +88,6 @@ const KanbanBoard = ({ boardId }) => {
                     onDragEnd={onDragEnd}
                     draggableId="lists"
                     type="list"
-                    style={{ transition: 'all 0.3s ease' }} 
                 >
                     <Droppable droppableId="lists" direction="horizontal" type="list">
                         {(provided) => (
@@ -105,6 +104,7 @@ const KanbanBoard = ({ boardId }) => {
                                         key={list.id}
                                         draggableId={`list-${list.id}`}
                                         index={index}
+                                        isDragDisabled={editingListId !== null} 
                                     >
                                         {(provided) => (
                                             <div
@@ -113,29 +113,26 @@ const KanbanBoard = ({ boardId }) => {
                                                 {...provided.dragHandleProps}
                                                 style={{
                                                     ...provided.draggableProps.style,
-                                                    transition: 'transform 0.3s ease', 
                                                 }}
                                             >
                                                 <List
-                                                    title={
-                                                        editingListId === list.id ? (
-                                                            <EditListForm
-                                                                listId={list.id}
-                                                                initialTitle={list.name}
-                                                                onEditSuccess={(updatedList) => {
-                                                                    setLists((prev) =>
-                                                                        prev.map((list) =>
-                                                                            list.id === updatedList.id ? updatedList : list
-                                                                        )
-                                                                    );
-                                                                    setEditingListId(null);
-                                                                }}
-                                                                onCancel={() => setEditingListId(null)}
-                                                            />
-                                                        ) : (
-                                                            list.name
-                                                        )
-                                                    }
+                                                    title={editingListId === list.id ? (
+                                                        <EditListForm
+                                                            listId={list.id}
+                                                            initialTitle={list.name}
+                                                            onEditSuccess={(updatedList) => {
+                                                                setLists((prev) =>
+                                                                    prev.map((list) =>
+                                                                        list.id === updatedList.id ? updatedList : list
+                                                                    )
+                                                                );
+                                                                setEditingListId(null);
+                                                            }}
+                                                            onCancel={() => setEditingListId(null)}
+                                                        />
+                                                    ) : (
+                                                        list.name
+                                                    )}
                                                     listId={list.id}
                                                     onDeleteList={handleDeleteList}
                                                     onEditTitle={() => {
